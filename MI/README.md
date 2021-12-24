@@ -8,7 +8,7 @@ Library used:
 4. pandas
 5. matplotplib
 
-conda install library_name
+$ conda install library_name
 ```
 
 ## Task:
