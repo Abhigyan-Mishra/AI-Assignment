@@ -1,7 +1,7 @@
 # Quantum Assisted Infrence Attack Model
-![](@attachment/Clipboard_2021-12-29-00-43-12.png)
+![](/img/AI.drawio.png)
 ## Quantum Assisted Genetic Algorithm to find best feature subset:
-![](@attachment/Clipboard_2021-12-29-00-42-41.png)
+![](/img/comp.png)
 **generations**  :  Number of generations
 
 **num** : Size of the chromosomes
