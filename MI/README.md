@@ -9,11 +9,18 @@ Library used:
 5. matplotplib
 
 $ conda install library_name
+
+### How to run
+$ python shadow-model.py dataset-name
+
 ```
+
+
 
 ## Task:
 
-- [ ] Training shadow model
-- [ ] Develop attacker model
+- [x] Training shadow model
+- [ ] Develop attacker model - DOING
 - [ ] Test attacker model
 - [ ] Use genetic algorithm model to test attacker model
+

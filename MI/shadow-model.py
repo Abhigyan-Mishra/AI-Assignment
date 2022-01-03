@@ -17,6 +17,8 @@ epochs: passes over the entire datasets.
 learning_rate
 """
 
+
+
 parser = argparse.ArgumentParser(description='Train shadow model.')
 parser.add_argument('-d', '--dataset', type=str, default='mnist', choices=["mnist"]) # can provide multiple choices to choose from.
 parser.add_argument('-b', '--batch_size', type=int, default=64)
