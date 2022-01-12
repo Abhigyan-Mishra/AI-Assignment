@@ -93,7 +93,7 @@ def train_shadow_model():
     print(f'Train Loss: {scores[0]} \t Train Accuracy: {scores[1]}')
     
     scores = model.evaluate(X_test, y_test, verbose=1)
-    print(f'Train Loss: {scores[0]} \t Train Accuracy: {scores[1]}')
+    print(f'Test Loss : {scores[0]} \t Test Accuracy {scores[1]}')
     
     
        
