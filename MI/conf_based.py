@@ -1,6 +1,6 @@
 import argparse
 import os
-from attacks.confidence_based_attack import attack
+from attacker_models.confidence_based_attack import confidence_attack
 
 
 def check_known_dataset_size(dataset):
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--target_model", type=str,
                         default="shadow_models/mninst/mnist.h5", help="Path for shadow model")
     parser.add_argument("-a", "--attack_model", type=str, default="XGBoost",
-                        choicec=["XGBoost"], help="Defaulted to XGBoost for Attacker Classifier")
+                        choices=["NN", "XGBoost"], help="Defaulted to XGBoost for Attacker Classifier")
     parser.add_argument("-s", "--sampling", type=str, default=None,
                         choices=["none", "undersampling", "oversampling"])
     parser.add_argument("-c", "--knowledge", type=float,
@@ -65,5 +65,5 @@ if __name__ == "__main__":
             print("Unknown dataset!!")
             exit()
 
-        attack(data, attacker_classifier, sampling, known_dataset, conf_histogram,
+        confidence_attack(data, attacker_classifier, sampling, known_dataset, conf_histogram,
                show_separate_results,  num_classes, num_targeted_classes, shadow_model, verbose)
