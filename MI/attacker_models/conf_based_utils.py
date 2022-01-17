@@ -1,5 +1,8 @@
 
 import numpy as np
+import matplotlib.pyplot as plt
+
+
 
 def compute_conf_train_average(labelsTrained, labels_train, conf_train):
     print("\n ******************** TRAIN SET ********************")
@@ -111,9 +114,10 @@ def per_class_labelling(numClasses, numTargetedClasses):
     
     
     
-def prepare_dataset(correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_Train, correctlyClassifiedIndex_Test, incorrectlyClassifiedIndex_Test, numTargetedClasses, conf_train, conf_test, labelsTrained, labels_train, labelsTest, labels_test):
-    print("XXXXXXXXXXXXXXXXXXXXXXX")
+def prepare_dataset(dataset, correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_Train, correctlyClassifiedIndex_Test, incorrectlyClassifiedIndex_Test, numClasses, numTargetedClasses, conf_train, conf_test, labelsTrained, labels_train, labelsTest, labels_test, save_conf_histogram=True):
     for j in range(numTargetedClasses):
+        print("XXXXXXXXXXXXXXXXXXXXXXX")
+        
         classYesX = conf_train[tuple([labels_train == j])]
         classNoX = conf_test[tuple([labels_test == j])]
         
@@ -121,5 +125,56 @@ def prepare_dataset(correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_T
             print(f"Class {str(j)} doesn't have enough sample for training for attack")
             continue
         
+            
+        correctlyLabeledYesX = correctlyClassifiedIndex_Train[tuple([labels_train == j])]
+        correctlyLabeledNoX = correctlyClassifiedIndex_Test[tuple([labels_test == j])]
+
+        incorrectlyLabeledYesX = incorrectlyClassifiedIndex_Train[tuple([labels_train == j])]
+        incorrectlyLabeledNoX = incorrectlyClassifiedIndex_Test[tuple([labels_test == j])]
         
-    
+        print("XXXXXXXXXXXXXXXXXXXXXXX22")
+        
+        
+        print("histogram")
+        t = classYesX[correctlyLabeledYesX]
+        t2 = classNoX[correctlyLabeledNoX]
+        
+        t = np.average(t, axis=0)
+        t2 = np.average(t2, axis=0)
+        
+        plt.style.use('seaborn-deep')
+        plt.plot(np.arange(numClasses), t, 'bx', label="Train samples")
+        plt.plot(np.arange(numClasses), t2, 'go', label="Test samples")
+        
+        plt.legend()
+        plt.xlabel("Class Number")
+        plt.ylabel("Average Confidence")
+        plt.savefig("figures/conf_histogram/" + dataset + '/correct-' + str(j) + '.png', bbox_inches='tight')            
+        plt.close()
+        
+        t = classYesX[incorrectlyLabeledYesX]
+        t2 = classNoX[incorrectlyLabeledNoX]
+        t = np.average(t, axis=0)
+        t2 = np.average(t2, axis=0)
+        plt.style.use('seaborn-deep')
+        plt.plot(np.arange(numClasses), t, 'bx', label="Train Samples")
+        plt.plot(np.arange(numClasses), t2, 'go', label="Test Samples")
+        plt.legend()
+        plt.xlabel('Class Number')
+        plt.ylabel('Average Confidence')
+        plt.savefig('figures/conf_histogram/' + dataset + '/misclassified-' + str(j) + '.png', bbox_inches='tight')
+        plt.close()
+        
+        
+        t = classYesX[correctlyLabeledYesX]
+        t2 = classNoX[correctlyLabeledNoX]
+        
+        bins = np.arange(101) / 100
+        plt.style.use('seaborn-deep')
+        n, bins, patches = plt.hist([t[:, j], t2[:, j]], bins,  alpha=1, label=["Train Samples", "Test Samples"])
+
+        plt.xlabel('Model Confidence')
+        plt.ylabel('Probability (%)') 
+        plt.legend(loc="upper left")    
+        plt.savefig('figures/conf_histogram/' + dataset + '/' + str(j) + '.png', bbox_inches='tight')
+        plt.close()

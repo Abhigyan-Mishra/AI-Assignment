@@ -11,9 +11,12 @@ Library used:
 $ conda install library_name
 
 ### How to run
-$ python shadow-model.py dataset-name
+$ python shadow-model.py -d dataset-name
 
 ```
+
+## Run confidence based attack
+python conf_based.py -d mnist -s none -a NN -m shadow_models/mnist/mnist.h5
 
 
 
