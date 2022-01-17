@@ -16,8 +16,10 @@ $ python shadow-model.py -d dataset-name
 ```
 
 ## Run confidence based attack
-python conf_based.py -d mnist -s none -a NN -m shadow_models/mnist/mnist.h5
+```
+$ python conf_based.py -d mnist -s none -a NN -m shadow_models/mnist/mnist.h5
 
+```
 
 
 ## Task:
