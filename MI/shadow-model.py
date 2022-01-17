@@ -7,7 +7,7 @@ import keras
 from keras.datasets import mnist
 from keras.layers import Conv2D, Dense, Flatten, AveragePooling2D
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 """
 batch_size: a hyperparameter that defines the number of samples to work through before updating the internal model parameters. 
@@ -17,7 +17,7 @@ learning_rate
 
 
 
-parsr = argparse.Argumentparsr(description='Train shadow model.')
+parsr = argparse.ArgumentParser(description='Train shadow model.')
 parsr.add_argument('-d', '--dataset', type=str, default='mnist', choices=["mnist"]) # can provide multiple choices to choose from.
 parsr.add_argument('-b', '--batch_size', type=int, default=64)
 parsr.add_argument('-e', '--epochs', type=int, default=5, help='Number of passes required')
@@ -83,7 +83,7 @@ def train_shadow_model():
     optimizer = keras.optimizers.Adam(lr=learningRate, beta_1=0.5, beta_2=0.99, epsilon=1e-08)
     
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-    model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=numberOfEpochs, shuffle=True, batch_size=batchSize)
+    hist = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=numberOfEpochs, shuffle=True, batch_size=batchSize)
 
     modelPath = os.path.join(model_dir, model_name)
     model.save(modelPath)
@@ -97,8 +97,14 @@ def train_shadow_model():
     
     predictions = model.predict(X_test)
     print(np.argmax(predictions[0]))
-    
-    
+    print(hist.history.keys())
+    plt.plot(hist.history['accuracy'])
+    plt.plot(hist.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')  
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.show()
        
 
 if __name__ == '__main__':
