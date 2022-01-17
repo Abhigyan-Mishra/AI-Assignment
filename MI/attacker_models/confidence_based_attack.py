@@ -82,6 +82,6 @@ def confidence_attack(dataset, attack_classifier, sampling, attacker_knowledge, 
     per_class_labelling( num_classes, num_targeted_classes)
     
     # prepare_dataset_attacker()
-    prepare_dataset(correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_Train, correctlyClassifiedIndex_Test, incorrectlyClassifiedIndex_Test, num_targeted_classes, conf_train, conf_test,labelsTrained, labels_train, labelsTest, labels_test)
+    prepare_dataset(dataset, correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_Train, correctlyClassifiedIndex_Test, incorrectlyClassifiedIndex_Test, num_classes, num_targeted_classes, conf_train, conf_test,labelsTrained, labels_train, labelsTest, labels_test, save_conf_histogram)
     
     

@@ -1,14 +1,12 @@
 # experiment with different setting and save in different epochs(epoch: one pass over the entire dataset)
 from __future__ import print_function
 import argparse
-import json
 import os
 import tensorflow as tf
 import keras
 from keras.datasets import mnist
 from keras.layers import Conv2D, Dense, Flatten, AveragePooling2D
-from keras.models import model_from_config
-
+import numpy as np
 
 
 """
@@ -19,12 +17,12 @@ learning_rate
 
 
 
-parser = argparse.ArgumentParser(description='Train shadow model.')
-parser.add_argument('-d', '--dataset', type=str, default='mnist', choices=["mnist"]) # can provide multiple choices to choose from.
-parser.add_argument('-b', '--batch_size', type=int, default=64)
-parser.add_argument('-e', '--epochs', type=int, default=5, help='Number of passes required')
-parser.add_argument('-l', '--learning_rate', type=float, default=0.001, help='learning rate.')
-args = parser.parse_args()
+parsr = argparse.Argumentparsr(description='Train shadow model.')
+parsr.add_argument('-d', '--dataset', type=str, default='mnist', choices=["mnist"]) # can provide multiple choices to choose from.
+parsr.add_argument('-b', '--batch_size', type=int, default=64)
+parsr.add_argument('-e', '--epochs', type=int, default=5, help='Number of passes required')
+parsr.add_argument('-l', '--learning_rate', type=float, default=0.001, help='learning rate.')
+args = parsr.parse_args()
 
 
 def create_train_model_dir(dataset):
@@ -69,15 +67,17 @@ def train_shadow_model():
 
     if data == "mnist":
         model = keras.Sequential()
-        model.add(Conv2D(filters=5, kernel_size=(3,3), activation='relu', input_shape=X_train.shape[1:]))
+        model.add(Conv2D(filters=6, kernel_size=(5, 5),
+                  activation='tanh', input_shape=X_train.shape[1:]))
         model.add(AveragePooling2D())
-        model.add(Conv2D(filters=5, kernel_size=(3,3), activation='relu'))
+        model.add(Conv2D(filters=16, kernel_size=(5, 5), activation='tanh'))
         model.add(AveragePooling2D())
-        
+
         model.add(Flatten())
-        model.add(Dense(units=120, activation='relu'))
-        model.add(Dense(units=84, activation='relu'))
+        model.add(Dense(units=128, activation='tanh'))
+        model.add(Dense(units=84, activation='tanh'))
         model.add(Dense(units=num_classes, activation='softmax'))
+        print(model.summary())
         
         
     optimizer = keras.optimizers.Adam(lr=learningRate, beta_1=0.5, beta_2=0.99, epsilon=1e-08)
@@ -94,6 +94,9 @@ def train_shadow_model():
     
     scores = model.evaluate(X_test, y_test, verbose=1)
     print(f'Test Loss : {scores[0]} \t Test Accuracy {scores[1]}')
+    
+    predictions = model.predict(X_test)
+    print(np.argmax(predictions[0]))
     
     
        
