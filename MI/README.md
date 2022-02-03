@@ -1,3 +1,21 @@
+### MNIST-SHADOW MODEL
+```
+ARCHITECTURE - LENET
+Layers:
+    - 2 CONV
+    - 2 AVERAGE POOLING
+    - 2 FULL CONVERTED 
+    - 1 OUTPUT
+
+Activation Function:
+    - tanh (others)
+    - softmax (output)
+
+
+
+```
+
+
 # ** MI: membership inference **
 
 Library used:

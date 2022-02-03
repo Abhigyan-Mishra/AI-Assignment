@@ -2,7 +2,8 @@ import numpy as np
 import os
 import json
 from keras.preprocessing import image
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, balanced_accuracy_score, accuracy_score
+
 
 
 # average over positive values
