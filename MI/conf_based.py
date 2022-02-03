@@ -35,8 +35,7 @@ if __name__ == "__main__":
                         default=0, help="Number of classes")
     parser.add_argument('--save_hist', default=False,
                         help='Save confidence histogram of each class.', action='store_true')
-    parser.add_argument('--show_separate_results', default=False,
-                        help='Show results for correctly classified and misclassified samples, separately.', action='store_true')
+   
     parser.add_argument('--verbose', default=False,
                         help='Print full details.', action='store_true')
     args = parser.parse_args()
@@ -66,4 +65,4 @@ if __name__ == "__main__":
             exit()
 
         confidence_attack(data, attacker_classifier, sampling, known_dataset, conf_histogram,
-               show_separate_results,  num_classes, num_targeted_classes, shadow_model, verbose)
+                 num_classes, num_targeted_classes, shadow_model, verbose)
