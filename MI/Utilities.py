@@ -1,9 +1,7 @@
 import numpy as np
 import os
 import json
-from keras.preprocessing import image
-from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, balanced_accuracy_score, accuracy_score
-
+from sklearn.metrics import confusion_matrix
 
 
 # average over positive values
@@ -16,7 +14,7 @@ def APV(a):
 
 # average over positive values of 2D array
 def APV2D(a):
-    positives = [a[a:, 0] != a[a[: 1] != -1, 1]]
+    positives = [a[a[:, 0] != -1, 0], a[a[:, 1] != -1, 1]]
     averages = np.average(positives, axis=1)
     stds = np.std(positives, axis=1)
     return (averages, stds)
@@ -32,6 +30,16 @@ def AGM(a):
         stds[i] = np.std(positives)
         
     return (averages, stds)
+
+def AGM2D(a):
+    avgs = np.zeros((a.shape[1], 2))
+    stds = np.zeros((a.shape[1], 2))
+    for i in range(a.shape[1]):
+        positives = [a[a[:, i, 0] != -1, i, 0], a[a[:, i, 1] != -1, i, 1]]
+        avgs[i] = np.average(positives, axis=1)
+        stds[i] = np.std(positives, axis=1)
+    return avgs, stds
+
 
 # weighted average
 def WA(value, count):
@@ -80,10 +88,9 @@ def CS(y_true, y_pred):
     return (TN, FN, TP, FP)
 
 
-
 # false alarm rate
 def FAR(y_true, y_pred):
-    TP, TN, FP, FN = classification_scores(y_true, )
+    TP, TN, FP, FN = CS(y_true,  y_pred)
     
     if FP + TN == 0:
         return 1
