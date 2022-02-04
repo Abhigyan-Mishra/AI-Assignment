@@ -249,7 +249,7 @@ def attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClas
 
     Y_size = classYesXTrain.shape[0]
     n_size = classNoXTrain.shape[0]
-
+    print()
     print(f"MI attack on class::  [{j}]")
 
     X_train = np.concatenate((classYesXTrain, classNoXTrain), axis=0)
