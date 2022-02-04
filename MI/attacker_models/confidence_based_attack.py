@@ -2,10 +2,8 @@ from __future__ import print_function
 import tensorflow as tf
 import keras
 from keras.datasets import mnist
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.datasets import cifar10
-from keras.datasets import cifar100
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
 import numpy as np
 from sklearn.metrics import f1_score, precision_score, recall_score, balanced_accuracy_score, accuracy_score
 from matplotlib import pyplot as plt
@@ -101,23 +99,32 @@ def confidence_attack(dataset, attack_classifier, sampling, attacker_knowledge, 
     train_stat = model.evaluate(X_train, y_train, verbose=0)
     test_stat = model.evaluate(X_test, y_test, verbose=0)
 
+
+    # test accuracy and train accuracy 
+
     train_acc = train_stat[1]
     test_acc = test_stat[1]
 
+
+
+# asked the shadow model to predict the test sample
+
+    # returns  the tensor for each datapoint [10 classes - it will return how likely to go to each class]
     conf_train = model.predict(X_train)
     conf_test = model.predict(X_test)
 
-    print(conf_train, conf_test)
 
-    labelsTrained = np.argmax(conf_train, axis=1)
+
+    # the conf train tensor will be classify to the group that has the highest value.
+    labelsTrained = np.argmax(conf_train, axis=1) # we have already used one hot encoder, [0. 0. 0. 0. 0. 1. 0. 0. 0. 0.] = 5
     labelsTest = np.argmax(conf_test, axis=1)
 
-    print(labelsTrained, labelsTest)
-
-    labels_train = np.argmax(y_train, axis=1)
+    print("labels", labelsTrained)
+    print("y_train[0]", y_train[0])
+    labels_train = np.argmax(y_train, axis=1) # this will give exact value (5)
     labels_test = np.argmax(y_test, axis=1)
 
-    print(labels_train.shape, labels_test.shape)
+    print("labels_train[0]", labels_train[0])
 
     '''
     @params: labels_train, labelsTrained, conf_train
@@ -138,7 +145,7 @@ def confidence_attack(dataset, attack_classifier, sampling, attacker_knowledge, 
          mi_far, mi_farSTD, c_mi_far, c_mi_farSTD, in_mi_far, in_mi_farSTD,
          mi_prec, mi_precSTD, c_mi_prec, c_mi_precSTD, in_mi_prec, in_mi_precSTD,
          mi_rcal, mi_rcalSTD, c_mi_rcal, c_mi_rcalSTD, in_mi_rcal, in_mi_rcalSTD,
-         mi_f1, mi_f1STD, c_mi_f1, c_mi_f1STD, in_mi_f1, in_mi_f1STD) = attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_Train, correctlyClassifiedIndex_Test, incorrectlyClassifiedIndex_Test, num_classes, num_targeted_classes, conf_train, conf_test, labelsTrained, labels_train, labelsTest, labels_test, attacker_knowledge, SHOW_ATTACK, attack_classifier,  save_conf_histogram)
+         mi_f1, mi_f1STD, c_mi_f1, c_mi_f1STD, in_mi_f1, in_mi_f1STD)  = attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_Train, correctlyClassifiedIndex_Test, incorrectlyClassifiedIndex_Test, num_classes, num_targeted_classes, conf_train, conf_test, labelsTrained, labels_train, labelsTest, labels_test, attacker_knowledge, SHOW_ATTACK, attack_classifier,  save_conf_histogram)
 
         print_scores(train_acc, test_acc, confTrain, confTrainSTD, confTest, confTest_STD, mi, mi_STD, c_mi, c_mi_STD, in_mi, in_mi_STD, mi_acc,
                      mi_accSTD, c_mi_acc, c_mi_accSTD, in_mi_acc, in_mi_accSTD,

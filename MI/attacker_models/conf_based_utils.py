@@ -1,38 +1,39 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from keras.models import Sequential
-from sklearn.metrics import confusion_matrix, f1_score, precision_score, false_alarm_rate, recall_score, balanced_accuracy_score, accuracy_score
-from Utilities import APV, APV2D
-from keras.layers import Dense
+from tensorflow.keras import Sequential
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, balanced_accuracy_score, accuracy_score
+from Utilities import APV, APV2D, FAR
+from tensorflow.keras.layers import Dense
 
 
 
 def compute_conf_train_average(labelsTrained, labels_train, conf_train):
     print("\n ******************** TRAIN SET ********************")
-    tempIndexer = np.arange(conf_train.shape[0])
-    tempConfArray = conf_train[tempIndexer, labels_train]
-    confTrain = np.average(tempConfArray)
-    confTrainSTD = np.std(tempConfArray)
+    tempIndexer = np.arange(conf_train.shape[0]) # [0 - 59999]
+    print("TempIndexer", tempIndexer)
+    tempConfArray = conf_train[tempIndexer, labels_train]  # confidence value for every single data point, the probability that each data point will be properly classified.
+    confTrain = np.average(tempConfArray)  # average them out so that it give me proper (normalized value), not bias towards bigger value.
+    confTrainSTD = np.std(tempConfArray) # find the standard deviation
 
     print(f"tempIndexer: {tempIndexer} \
         \ntempConfArray: {tempConfArray} \nconfTrain: {confTrain}  \
             \nconfTrainSTD: {confTrainSTD}")
 
-    correctlyClassifiedIndex_Train = labelsTrained == labels_train
+    correctlyClassifiedIndex_Train = labelsTrained == labels_train   # this is for thos that are correctly classified
     correctConfArray = conf_train[tempIndexer[correctlyClassifiedIndex_Train],
-                                  labels_train[correctlyClassifiedIndex_Train]]
-    correctConfTrain = np.average(correctConfArray)
-    correctConfTrain_STD = np.std(correctConfArray)
+                                  labels_train[correctlyClassifiedIndex_Train]]   # confidence values for correctly classified datapoints.
+    correctConfTrain = np.average(correctConfArray)   # find average
+    correctConfTrain_STD = np.std(correctConfArray) # find standard deviation
 
     print(f"correctly classified Index: {correctlyClassifiedIndex_Train} \
         \ncorrect confidence Array: {correctConfArray} \
            \ncorrect confidence trained: {correctConfTrain} \
              \ncorrect confidence trained STD: {correctConfTrain_STD}")
 
-    incorrectlyClassifiedIndex_Train = labelsTrained != labels_train
+    incorrectlyClassifiedIndex_Train = labelsTrained != labels_train  # for missclassified
     incorrectConfArray = conf_train[tempIndexer[incorrectlyClassifiedIndex_Train],
-                                    labelsTrained[incorrectlyClassifiedIndex_Train]]
+                                    labelsTrained[incorrectlyClassifiedIndex_Train]] # confidence values of missclassification - how confidence that it will be missclassified.
     incorrectConfTrain = np.average(incorrectConfArray)
     incorrectConfTrain_STD = np.std(incorrectConfArray)
 
@@ -170,25 +171,18 @@ def to_store_p_measures(numClasses, numTargetedClasses):
 
     (balancedAccuracy, correctlyLabeledBalancedAccuracy,
      incorrectlyLabeledBalancedAccuracy) = getBalancedAccuracy(numTargetedClasses)
-    print(f"Balanced Accuracy: {balancedAccuracy}")
     (accuracy, correctlyLabeledAccuracy,
      incorrectlyLabeledAccuracy) = getAccuracy(numTargetedClasses)
-    print(f"accuracy: {accuracy}")
     (far, correctlyLabeledFar, incorrectlyLabeledFar) = getFAR(numTargetedClasses)
-    print(f"far: {far}")
 
     (precision, correctlyLabeledPrecision,
      incorrectlyLabeledPrecision) = getPrecision(numTargetedClasses)
-    print(f"precision: {precision}")
 
     (recall, correctlyLabeledRecall,
      incorrectlyLabeledRecall) = getRecall(numTargetedClasses)
-    print(f"recall: {recall}")
 
     (f1score, correctlyLabeledF1score,
      incorrectlyLabeledF1score) = getF1Score(numTargetedClasses)
-    print(f"f1score: {f1score}")
-
     return (
         balancedAccuracy,
         correctlyLabeledBalancedAccuracy,
@@ -206,16 +200,24 @@ def to_store_p_measures(numClasses, numTargetedClasses):
 def attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClassifiedIndex_Train, correctlyClassifiedIndex_Test, incorrectlyClassifiedIndex_Test, numClasses, numTargetedClasses, conf_train, conf_test, labelsTrained, labels_train, labelsTest, labels_test, attacker_knowledge, SHOW_ATTACK, attack_classifier, save_conf_histogram=True):
     print("XXXXXXXXXXXXXXXXXXXXXXX")
 
-    classYesX = conf_train[tuple([labels_train == j])]
+
+    classYesX = conf_train[tuple([labels_train == j])]  # highest at where it matches [9.9997485e-01 7.6881284e-09 7.7287825e-07 2.1447873e-07 1.6986093e-07 1.9313011e-06 5.6364697e-06 3.9415945e-06 6.9429079e-06 5.5773412e-06]
+
     classNoX = conf_test[tuple([labels_test == j])]
+    
 
+    #check if there is enough sample
 
-    if classYesX.shape[0] < 15 or classNoX.shape[0] < 15:
+    if classYesX.shape[0] < 15 or classNoX.shape[0] < 15: 
         print(
             f"Class {str(j)} doesn't have enough sample for training for attack")
 
+
+    # find the exact classified value 
     correctlyLabeledYesX = correctlyClassifiedIndex_Train[tuple(
         [labels_train == j])]
+
+    
     correctlyLabeledNoX = correctlyClassifiedIndex_Test[tuple(
         [labels_test == j])]
 
@@ -224,8 +226,10 @@ def attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClas
     incorrectlyLabeledNoX = incorrectlyClassifiedIndex_Test[tuple(
         [labels_test == j])]
 
-    plot_graph()
+    # plot_graph()
 
+    # multiply with what have found out and already known.
+    
     classYesSize = int(classYesX.shape[0] * attacker_knowledge)
     classYesXTrain = classYesX[:classYesSize]
     classYesYTrain = np.ones(classYesXTrain.shape[0])
@@ -246,7 +250,7 @@ def attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClas
     Y_size = classYesXTrain.shape[0]
     n_size = classNoXTrain.shape[0]
 
-    print("MI attack on class...")
+    print(f"MI attack on class::  [{j}]")
 
     X_train = np.concatenate((classYesXTrain, classNoXTrain), axis=0)
     y_train = np.concatenate((classYesYTrain, classNoYTrain), axis=0)
@@ -264,14 +268,21 @@ def attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClas
             ATTACK_MODEL.add(
                 Dense(128, input_dim=numClasses, activation="relu"))
             ATTACK_MODEL.add(Dense(64, activation="relu"))
-            ATTACK_MODEL.add(Dense(1, activation="relu"))
+            ATTACK_MODEL.add(Dense(1, activation="sigmoid"))
 
             ATTACK_MODEL.compile(
                 loss='binary_crossentropy', optimizer="adam", metrics=['acc'])
             ATTACK_MODEL.fit(X_train, y_train, validation_data=(
                 X_test, y_test), epochs=30, batch_size=32, verbose=False, shuffle=True)
 
+            # y_pred = np.argmax(ATTACK_MODEL.predict(X_test), axis=-1)
             y_pred = ATTACK_MODEL.predict(X_test)
+            predictions = np.where(y_pred > 0.8, 1,0)
+
+
+            # class_labels =[labels[i] for i,prob in enumerate(y_pred) if prob > 0.5]
+            # print("class_labels", class_labels)
+            
 
             (
                 balancedAccuracy,
@@ -286,12 +297,14 @@ def attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClas
                 f1score, correctlyLabeledF1, incorrectlyLabeledF1
             ) = to_store_p_measures(numClasses, numTargetedClasses)
 
-            balancedAccuracy[j] = balanced_accuracy_score(y_test, y_pred)
-            accuracy[j] = accuracy_score(y_test, y_pred)
-            far[j] = false_alarm_rate(y_test, y_pred)
-            precision[j] = precision_score(y_test, y_pred)
-            recall[j] = recall_score(y_test, y_pred)
-            f1score[j] = f1_score(y_test, y_pred)
+
+
+            balancedAccuracy[j] = balanced_accuracy_score(y_test, predictions )
+            accuracy[j] = accuracy_score(y_test, predictions)
+            far[j] = FAR(y_test, predictions)
+            precision[j] = precision_score(y_test, predictions, average="weighted", labels=np.unique(predictions))
+            recall[j] = recall_score(y_test, predictions)
+            f1score[j] = f1_score(y_test, predictions)
 
             mi, mi_STD = APV(balancedAccuracy)
             c_mi, c_mi_STD = APV(correctlyLabeledBalancedAccuracy)
