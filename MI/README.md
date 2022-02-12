@@ -42,7 +42,7 @@ $ python conf_based.py -d mnist -s none -a NN -m shadow_models/mnist/mnist.h5
 ## Task:
 
 - [x] Training shadow model
-- [ ] Develop attacker model - DOING
-- [ ] Test attacker model
-- [ ] Use genetic algorithm model to test attacker model
+- [x] Develop attacker model - DOING
+- [x] Test attacker model
+- [] Use genetic algorithm model to test attacker model
 
