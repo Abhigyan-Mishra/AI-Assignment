@@ -8,7 +8,7 @@ import math
 
 
 
-filename = 'wine'
+filename = 'wiscon'
 data = pd.read_csv('datasets/'+ str(filename) + '.csv')
 qubo = pd.read_csv('qubos/'+ str(filename) + '_qubo.csv')
 qubo = qubo.values[:,1:(qubo.shape[0]+1)]
