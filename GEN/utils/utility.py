@@ -73,7 +73,7 @@ def stringfy(bitstring):
     return answer
 
 
-def prediction(dataset):
+def predictions(dataset):
     X = dataset.iloc[:,:-1]
     Y = dataset.iloc[:,-1]
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.25, random_state = 123)
@@ -83,9 +83,10 @@ def prediction(dataset):
     classifier = DecisionTreeClassifier(criterion = 'entropy', random_state = 123)
     classifier.fit(X_train, Y_train)
     Y_pred = classifier.predict(X_test)
-    evaluates = classifier.evaluate(X_test, Y_test)
-    print("++++++++++++++++++++++++++++++++++", evaluates)
-    return accuracy_score(Y_test,Y_pred)*100
+    class_probabilities = classifier.predict_proba(X_test) 
+
+    return class_probabilities, accuracy_score(Y_test,Y_pred)*100
+   
 
 
 

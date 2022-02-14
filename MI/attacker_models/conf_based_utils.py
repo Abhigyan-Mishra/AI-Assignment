@@ -275,15 +275,8 @@ def attack_classwise(j, dataset, correctlyClassifiedIndex_Train, incorrectlyClas
             ATTACK_MODEL.fit(X_train, y_train, validation_data=(
                 X_test, y_test), epochs=30, batch_size=32, verbose=False, shuffle=True)
 
-            # y_pred = np.argmax(ATTACK_MODEL.predict(X_test), axis=-1)
             y_pred = ATTACK_MODEL.predict(X_test)
-            predictions = np.where(y_pred > 0.8, 1,0)
-
-
-            # class_labels =[labels[i] for i,prob in enumerate(y_pred) if prob > 0.5]
-            # print("class_labels", class_labels)
-            
-
+            predictions = np.where(y_pred > 0.8, 1,0)            
             (
                 balancedAccuracy,
                 correctlyLabeledBalancedAccuracy,
