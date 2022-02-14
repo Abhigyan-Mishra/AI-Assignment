@@ -107,7 +107,7 @@ def confidence_attack(dataset, attack_classifier, sampling, attacker_knowledge, 
     conf_train = model.predict(X_train)
     conf_test = model.predict(X_test)
 
-    print(conf_train, conf_test)
+    print("conf-train, conf-test", conf_train, conf_test)
 
     labelsTrained = np.argmax(conf_train, axis=1)
     labelsTest = np.argmax(conf_test, axis=1)
